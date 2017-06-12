@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://unpkg.com/rxjs/bundles/Rx.js"></script>
+    <script>
+
+
+        var serializedAction = [], ctx, myCanvasObj, canvasRect;
+
+        function getMousePos(canvas, evt) {
+            return {
+                x: evt.clientX - canvasRect.left,
+                y: evt.clientY - canvasRect.top
+            };
+        };
+
+        $(document).ready(function () {
+            console.log('loaded');
+            console.log(window.Rx);
+
+            let mouseDown$ = window.Rx.Observable.fromEvent(myCanvasObj, 'mousedown');//.subscribe((e) => console.log('mouse down', getMousePos(myCanvasObj, e)));
+            let mouseUp$ = window.Rx.Observable.fromEvent(myCanvasObj, 'mouseup');
+            let mouseMove$ = window.Rx.Observable.fromEvent(myCanvasObj, 'mousemove')
+            mouseDown$.subscribe((e) => {
+//                console.log('mouse down');
+                let startPoint = getMousePos(myCanvasObj, e);
+                let actions = [];
+                ctx.moveTo(startPoint.x, startPoint.y);
+                actions.push(startPoint);
+                serializedAction.push(actions);
+
+//                console.log(serializedAction);
+                mouseMove$
+                    .takeUntil(mouseUp$)
+                    .throttleTime(25)
+                    .map(e => getMousePos(myCanvasObj, e))
+                    .subscribe((coordinate) => {
+//                        console.log('mouse move', coordinate);
+                        ctx.lineTo(coordinate.x, coordinate.y);
+                        ctx.stroke();
+                        actions.push(coordinate);
+                    });
+            });
+
+        });
+
+        function replay() {
+            let flatActions = [];
+            serializedAction.map(actionArray => {
+                flatActions.push({x: -1});  // Markert for begin path..
+                flatActions = flatActions.concat(actionArray);
+            });
+//            console.log('flat actions ', flatActions);
+            drawActions(flatActions, 50)
+        }
+
+        function drawActions(actionList, interval) {
+            if (!actionList || actionList.length === 0)
+                return;
+            let start = 0;
+            let timerId = setInterval(function () {
+                if (start === actionList.length - 1) {
+                    clearInterval(timerId)
+                }
+                else {
+                    if (actionList[start].x === -1) {
+                        ctx.beginPath();
+                        start++;
+                        ctx.moveTo(actionList[start].x, actionList[start].y);
+                    } else {
+                        ctx.lineTo(actionList[start].x, actionList[start].y);
+                        ctx.stroke();
+                    }
+                    start++;
+                }
+            }, interval);
+        }
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvasRect.width, canvasRect.height)
+        }
+
+        function clearBuffer() {
+            serializedAction = [];
+        }
+    </script>
+
+</head>
+<body>
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #000000;"></canvas>
+<button onclick="replay()"> Replay</button>
+<button onclick="clearCanvas()"> clear</button>
+<button onclick="clearBuffer()"> ClearBuffer</button>
+</body>
+</html>
