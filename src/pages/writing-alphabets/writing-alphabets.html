@@ -7,6 +7,7 @@
 <ion-header>
 
     <ion-navbar>
+        <my-navbar-component (handleNext)="nextItem()" ></my-navbar-component>
         <ion-title>writing-alphabets</ion-title>
     </ion-navbar>
 
@@ -14,13 +15,14 @@
 
 
 <ion-content padding>
-    <div>
-        <canvas id="blackboard"
+    <div class="board">
+        <canvas id="blackboard" width="500" height="300"
         ></canvas>
     </div>
-    <div>
+    <div class="board-button-block">
         <button (click)="replay()"> Replay</button>
         <button (click)="clearCanvas()"> clear</button>
         <button (click)="clearBuffer()"> ClearBuffer</button>
+        <button (click)="dumpBuffer()"> Dump Buffer </button>
     </div>
 </ion-content>

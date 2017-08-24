@@ -10,9 +10,9 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 
 import {CloudSettings, CloudModule} from '@ionic/cloud-angular';
-import {CanvasDrawService} from '../services/canvas.service';
+import {CanvasDrawService} from '../services/canvas.utilities';
 import {WritingAlphabetsPage} from '../pages/writing-alphabets/writing-alphabets';
-
+import {MyNavbarComponent} from '../components/navbar/navbar.component';
 const cloudSettings: CloudSettings = {
     'core': {
         'app_id': 'c05da8b4'
@@ -24,7 +24,8 @@ const cloudSettings: CloudSettings = {
         MyApp,
         HomePage,
         ListPage,
-        WritingAlphabetsPage
+        WritingAlphabetsPage,
+        MyNavbarComponent
     ],
     imports: [
         BrowserModule,

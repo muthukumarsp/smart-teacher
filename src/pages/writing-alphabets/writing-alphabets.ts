@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
-import {CanvasDrawService} from '../../services/canvas.service';
+import {CanvasDrawService} from '../../services/canvas.utilities';
+import { MyNavbarComponent } from '../../components/navbar/navbar.component'
 
 /**
  * Generated class for the WritingAlphabetsPage page.
@@ -11,7 +12,7 @@ import {CanvasDrawService} from '../../services/canvas.service';
 @IonicPage()
 @Component({
     selector: 'page-writing-alphabets',
-    templateUrl: 'writing-alphabets.html',
+    templateUrl: 'writing-alphabets.html'
 })
 export class WritingAlphabetsPage {
 
@@ -23,7 +24,7 @@ export class WritingAlphabetsPage {
 
     ionViewDidLoad() {
         console.log('ionViewDidLoad WritingAlphabetsPage');
-        this.canvasDrawService.InitCanvas("blackboard")
+        this.canvasDrawService.InitCanvas("blackboard");
     }
 
     ionViewWillUnload() {
@@ -41,6 +42,10 @@ export class WritingAlphabetsPage {
 
     public clearBuffer() {
         this.canvasDrawService.clearBuffer();
+    }
+
+    public dumpBuffer(){
+        this.canvasDrawService.dumpCanvasBuffer();
     }
 
 }
