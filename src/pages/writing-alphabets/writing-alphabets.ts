@@ -1,7 +1,8 @@
-import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
-import {CanvasDrawService} from '../../services/canvas.utilities';
+import { Component } from '@angular/core';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { CanvasDrawService } from '../../services/canvas.utilities';
 import { MyNavbarComponent } from '../../components/navbar/navbar.component'
+import { AppSettings } from '../../app/app.settings'
 
 /**
  * Generated class for the WritingAlphabetsPage page.
@@ -16,37 +17,17 @@ import { MyNavbarComponent } from '../../components/navbar/navbar.component'
 })
 export class WritingAlphabetsPage {
 
+    public currentChar: string;
+    public charIndex: number; // char index in navbar array
+    public canvasOffset: number; // char index in navbar array
     constructor(public navCtrl: NavController,
-                public navParams: NavParams,
-                private canvasDrawService: CanvasDrawService) {
-
+        public navParams: NavParams,
+        private canvasDrawService: CanvasDrawService) {
     }
-
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad WritingAlphabetsPage');
-        this.canvasDrawService.InitCanvas("blackboard");
+    public onCharChanged($event): void {
+        console.log('writing alphabets: char changed', $event);
+        this.currentChar = $event.currentChar;
+        this.charIndex = $event.charIndex;
+        this.canvasOffset = this.charIndex % AppSettings.NUMBER_OF_BOXES * AppSettings.BOX_WIDTH;
     }
-
-    ionViewWillUnload() {
-        console.log("page will unload.. cleaning CANVAS")
-        this.canvasDrawService.CleanupCanvas();
-    }
-
-    public replay() {
-        this.canvasDrawService.replay();
-    }
-
-    public clearCanvas() {
-        this.canvasDrawService.clearCanvas();
-    }
-
-    public clearBuffer() {
-        this.canvasDrawService.clearBuffer();
-    }
-
-    public dumpBuffer(){
-        this.canvasDrawService.dumpCanvasBuffer();
-    }
-
 }
-

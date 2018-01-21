@@ -1,15 +1,19 @@
 page-writing-alphabets {
 
-  #blackboard {
-    // width: 100%;
-    // height: 400px;
+  .blackboard {
     border: 1px solid #000000;
-    //background: #000000;
+    background: #000000;
     display: block;
     margin:auto;
   }
+  .black-slate{
+    @extend .blackboard;
+  }
  
   .board-button-block{
-    margin:auto;
+    margin:30px auto;
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
   }
 }

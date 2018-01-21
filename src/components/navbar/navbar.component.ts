@@ -1,236 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 // import { Hero } from './hero';
+import { TAMIL_CHAR_MAPPINGS } from '../../services/tamil-char-canvas-mapping'
+
+interface NAVBAR_STATUS {
+    currentChar: string;
+    charIndex: number;
+}
 @Component({
     selector: 'my-navbar-component',
     templateUrl: 'navbar.component.html'
 })
-export class MyNavbarComponent {
-    //   @Input() hero: Hero;
+export class MyNavbarComponent implements OnInit {
+    @Output() onCharChanged = new EventEmitter<NAVBAR_STATUS>();
 
-    public alphabetList: string[];
+    public alphabetList: any;
     // public currentAlphabet:string;
     public currentIndex;
     public currentAlphabet: string;
     public alphabetToSerializeMapping: any;
 
     constructor() {
-        this.alphabetList = ['&#x0b85;', '&#x0B86;', '&#x0B87;', '&#x0B88;', '	&#x0B89;', '&#x0B8A;', '&#x0B8E;', '&#x0B8F;', '&#x0B90;', '&#x0B92;', '&#x0B93;', '&#x0B94;'];
+        this.alphabetList = Object.keys(TAMIL_CHAR_MAPPINGS);
+        // this.alphabetList = TAMIL_CHAR_MAPPINGS;
         this.currentIndex = 0;
-        this.alphabetToSerializeMapping = [
-            {
-                uniCode: "0B85",
-                serialized: "",
-            },
-            {
-                uniCode: "0B86",
-                serialized: "",
-            },
-            {
-                uniCode: "0B87",
-                serialized: "",
-            },
-            {
-                uniCode: "0B88",
-                serialized: "",
-            },
-            {
-                uniCode: "0B89",
-                serialized: "",
-            },
-            {
-                uniCode: "0B8A",
-                serialized: "",
-            },
-            {
-                uniCode: "0B8E",
-                serialized: "",
-            }, 
-            {
-                uniCode: "0B8F",
-                serialized: "",
-            },
-            {
-                uniCode: "0B90",
-                serialized: "",
-            },
-            {
-                uniCode: "0B92",
-                serialized: "",
-            },
-            {
-                uniCode: "0B93",
-                serialized: "",
-            },
-            {
-                uniCode: "0B94",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            },
-            {
-                uniCode: "",
-                serialized: "",
-            }
-
-
-        ]
     }
-
+    ngOnInit() {
+        this.onCharChanged.emit({
+            currentChar: this.alphabetList[this.currentIndex],
+            charIndex: this.currentIndex
+        });
+    }
     public nextAlphabet(): void {
         if (this.currentIndex < this.alphabetList.length - 1) {
             this.currentIndex++;
+            this.onCharChanged.emit({
+                currentChar: this.alphabetList[this.currentIndex],
+                charIndex: this.currentIndex
+            });
         }
     }
-
     public previousAlphabet(): void {
         if (this.currentIndex > 0) {
             this.currentIndex--;
+            this.onCharChanged.emit({
+                currentChar: this.alphabetList[this.currentIndex],
+                charIndex: this.currentIndex
+            });
         }
     }
     public getSymbol(): any {
