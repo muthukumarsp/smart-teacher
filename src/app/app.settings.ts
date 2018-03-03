@@ -4,5 +4,5 @@ export class AppSettings {
     public static REDRAW_ACTION_INTERVAL = 25;
     public static BOX_WIDTH = 100;
     public static BOX_HEIGHT = 100;
-    public static NUMBER_OF_BOXES = 5;
+    public static NUMBER_OF_BOXES = 4;
 };

@@ -45,8 +45,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         this.CleanupCanvas();
     }
 
-    public replay(charIndex, canvasOffset) {
-        this.canvasDrawService.replay(this.canvasCtx, charIndex, canvasOffset);
+    public replay(currentChar, canvasOffset) {
+        this.canvasDrawService.replay(this.canvasCtx, currentChar, canvasOffset);
     }
 
     public clearBuffer() {

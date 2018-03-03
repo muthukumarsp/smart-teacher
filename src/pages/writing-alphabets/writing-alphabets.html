@@ -16,7 +16,10 @@
     <div class="board">
         <canvas-component #blackBoardInst canvasid="blackboard" canvaswidth="500" canvasheight="100" canvasstyle="blackboard"></canvas-component>
         <div class="board-button-block">
-            <button (click)="blackBoardInst.replay(currentChar, canvasOffset)"> Replay</button>
+            <button (click)="blackBoardInst.replay(currentChar, canvasOffset); playAudio(charIndex)">
+                <!-- <button (click)="playAudio(charIndex)"> -->
+                Replay</button>
+            <!-- <button (click)="blackBoardInst.replay(currentChar, canvasOffset), playAudio(currentChar)"> Replay</button> -->
             <!--<button (click)="blackBoardInst.clearCanvas()"> clear</button>-->
             <button (click)="blackBoardInst.clearBuffer()"> ClearBuffer</button>
             <button (click)="blackBoardInst.dumpBuffer()"> Dump Buffer </button>
