@@ -32,7 +32,7 @@
             <button (click)="blackSlateInt.replayOld()" [disabled]="!(this.isDrawingCompleted$ | async)">
                 <ion-icon name="refresh"></ion-icon>
             </button>
-            <button (click)="blackSlateInt.clearCanvas()"> clear</button>
+            <button (click)="blackSlateInt.clearBuffer()"> clear</button>
             <!-- <button (click)="blackSlateInt.clearBuffer()"> ClearBuffer</button> -->
             <!-- <button (click)="blackSlateInt.dumpBuffer()"> Dump Buffer </button> -->
         </div>

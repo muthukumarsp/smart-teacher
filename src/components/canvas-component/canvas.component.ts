@@ -52,15 +52,17 @@ export class CanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public replay(charIndex, canvasOffset) {
-        return this.canvasDrawService.replay(this.canvasCtx, charIndex, canvasOffset);
+        this.canvasDrawService.replay(this.canvasCtx, charIndex, canvasOffset);
     }
 
     public replayOld() {
-        return this.canvasDrawService.replayOld(this.canvasCtx, this.serializedActionArr);
+        if (this.serializedActionArr && this.serializedActionArr.length) {
+            this.canvasDrawService.replayOld(this.canvasCtx, this.serializedActionArr);
+        }
     }
-    /*  public getCanvasDarawStatus(): Observable<any> {
+     public getCanvasDarawStatus(): Observable<any> {
          return this.canvasDrawService.getCanvasDarawStatus();
-     } */
+     }
 
     public clearBuffer() {
         this.serializedActionArr = [];

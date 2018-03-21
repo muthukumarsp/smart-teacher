@@ -138,11 +138,13 @@ export class CanvasDrawService {
         canvasCtx.clearRect(canvasOffset + 1,
             0,
             AppSettings.BOX_WIDTH - 1,
-            AppSettings.BOX_HEIGHT); 
+            AppSettings.BOX_HEIGHT);
     }
     private drawActions(canvasCtx, actionList, interval, canvasOffset = 0) {
-        if (!actionList || actionList.length === 0)
+        if (!actionList || actionList.length === 0) {
+            this.drawStateSubject.next(CanvasDrawStatus.DRAW_COMPLETED);
             return;
+        }
         let start = 0;
         // https://stackoverflow.com/questions/2749244/javascript-setinterval-and-this-solution
 
