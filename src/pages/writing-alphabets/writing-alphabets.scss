@@ -1,5 +1,11 @@
 page-writing-alphabets {
 
+  .ion-icon{
+    font-size: 2.5em;
+  }
+  button{
+    font-size: 1.5em;
+  }
   .blackboard {
     border: 1px solid #000000;
     background: #000000;
@@ -16,4 +22,9 @@ page-writing-alphabets {
     display: flex;
     justify-content: space-between;
   }
+  .active-char{
+    color: orangered;
+    font-size: 25px;
+  }
+
 }

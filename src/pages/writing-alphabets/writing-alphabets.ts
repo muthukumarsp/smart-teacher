@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { CanvasDrawService } from '../../services/canvas.utilities';
-import { MyNavbarComponent } from '../../components/navbar/navbar.component'
 import { AppSettings } from '../../app/app.settings'
-import { NativeAudio } from '@ionic-native/native-audio';
+import { TAMIL_CHAR_MAPPINGS } from '../../services/tamil-char-canvas-mapping'
+import { NativeAudio } from 'ionic-native';
+import { CanvasComponent } from '../../components/canvas-component/canvas.component';
+import {  CanvasDrawService } from '../../services/canvas.utilities';
+import { Observable } from 'rxjs/Observable';
+
 /**
  * Generated class for the WritingAlphabetsPage page.
  *
@@ -15,23 +18,25 @@ import { NativeAudio } from '@ionic-native/native-audio';
     selector: 'page-writing-alphabets',
     templateUrl: 'writing-alphabets.html'
 })
-export class WritingAlphabetsPage {
-
+export class WritingAlphabetsPage implements AfterViewInit {
+    @ViewChild("blackBoardInst") blackBoardInst: CanvasComponent;
     public currentChar: string;
-    public charIndex: number; // char index in navbar array
+    public currentIndex: number = 0; // char index in navbar array
     public canvasOffset: number; // char index in navbar array
-    private indexToFileNameMapping: any = [
+    public alphabetList: any;
+    public isDrawingCompleted$: Observable<any>;
+    private indexToFileNameMapping: string[] = [
         'அ.wav',
         'ஆ.wav',
         'இ.wav',
         'ஈ.mp3',
         'உ.mp3',
         'ஊ.mp3',
-        'எ.mp3',
+        'எ.wav',
         'ஏ.mp3',
-        'ஐ.mp3',
+        'ஐ.wav',
         'ஒ.mp3',
-        'ஓ.mp3',
+        'ஓ.wav',
         'ஔ.mp3',
         'ஃ.mp3',
         'க்.mp3',
@@ -55,36 +60,59 @@ export class WritingAlphabetsPage {
     ];
     constructor(public navCtrl: NavController,
         public navParams: NavParams,
-        private canvasDrawService: CanvasDrawService,
-        private nativeAudio: NativeAudio) {
+        public canvasDrawService: CanvasDrawService) {
+        this.currentIndex = 0;
+        // this.isDrawingCompleted = true;
+        this.alphabetList = Object.keys(TAMIL_CHAR_MAPPINGS);
+        this.updateCurrentState();
         this.loadAudioFiles();
+        this.isDrawingCompleted$ = this.canvasDrawService.getCanvasDarawStatus();
     }
-    public onCharChanged($event): void {
-        console.log('writing alphabets: char changed', $event);
-        this.currentChar = $event.currentChar;
-        this.charIndex = $event.charIndex;
-        this.canvasOffset = this.charIndex % AppSettings.NUMBER_OF_BOXES * AppSettings.BOX_WIDTH;
+    ngAfterViewInit() {
+        this.playCurrentState();
     }
-    ionViewWillUnload(): void {
-        console.log(' ionViewWillUnload()');
-    };
 
-    protected playAudio(charIndex): void {
-        console.log("play Audio currentChar", charIndex);
-        let audioFileName = this.indexToFileNameMapping[charIndex];
+    public nextAlphabet() {
+        if (this.currentIndex < this.alphabetList.length - 1) {
+            this.currentIndex++;
+            this.updateCurrentState();
+            this.playCurrentState();
+        }
+    }
+    public previousAlphabet() {
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+            this.updateCurrentState();
+            this.playCurrentState();
+        }
+    }
+
+    public playCurrentState() {
+        this.blackBoardInst.replay(this.currentChar, this.canvasOffset);
+        this.playAudio();
+    }
+    protected playAudio(): void {
+        console.log("play Audio currentChar", this.currentIndex);
+        let audioFileName = this.indexToFileNameMapping[this.currentIndex];
         console.log('playing filename', 'assets/audio/' + audioFileName);
-        this.nativeAudio.play(audioFileName + 'id').then(
+        NativeAudio.play(audioFileName + 'id').then(
             () => console.log("audio play sucess"),
             () => console.log("audio play failed"));
-        // this.nativeAudio.unload('uniqueId1').then(onSuccess, onError); */
+        /*  NativeAudio.unload(audioFileName + 'id').then(() => { console.log('unload success'); },
+             () => { console.log(' onError'); }); */
     }
     private loadAudioFiles(): void {
         for (let i = 0; i < this.indexToFileNameMapping.length; i++) {
             let audioFileName = this.indexToFileNameMapping[i];
-            this.nativeAudio.preloadSimple(audioFileName + 'id', 'assets/audio/' + audioFileName).then(
+            NativeAudio.preloadSimple(audioFileName + 'id', 'assets/audio/' + audioFileName).then(
                 () => console.log("audio லொடு sucess", audioFileName + 'id'),
                 () => console.log("audio லோடு failed"));
         }
+    }
+
+    private updateCurrentState() {
+        this.currentChar = this.alphabetList[this.currentIndex]
+        this.canvasOffset = this.currentIndex % AppSettings.NUMBER_OF_BOXES * AppSettings.BOX_WIDTH;
     }
 
 
