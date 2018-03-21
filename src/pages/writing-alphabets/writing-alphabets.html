@@ -4,29 +4,37 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
+<!-- <ion-header>
     <ion-navbar>
         <my-navbar-component (onCharChanged)="onCharChanged($event)"></my-navbar-component>
         <ion-title>writing-alphabets</ion-title>
     </ion-navbar>
-</ion-header>
+</ion-header> -->
 
 
 <ion-content padding>
     <div class="board">
-        <canvas-component #blackBoardInst canvasid="blackboard" canvaswidth="500" canvasheight="100" canvasstyle="blackboard"></canvas-component>
+        <canvas-component #blackBoardInst canvasid="blackboard" canvasstyle="blackboard"></canvas-component>
         <div class="board-button-block">
-            <button (click)="blackBoardInst.replay(currentChar, canvasOffset)"> Replay</button>
-            <!--<button (click)="blackBoardInst.clearCanvas()"> clear</button>-->
-            <button (click)="blackBoardInst.clearBuffer()"> ClearBuffer</button>
-            <button (click)="blackBoardInst.dumpBuffer()"> Dump Buffer </button>
+            <button [disabled]="!(this.isDrawingCompleted$ | async) || !(this.currentIndex > 0)">
+                <ion-icon ios="ios-arrow-back" md="md-arrow-back" (click)="previousAlphabet()"></ion-icon>
+            </button>
+            <div class="active-char" [innerHtml]="currentChar"></div>
+            <button [disabled]="!(this.isDrawingCompleted$ | async)">
+                <ion-icon name="refresh" (click)="playCurrentState()"></ion-icon>
+            </button>
+            <button [disabled]="!(this.isDrawingCompleted$ | async) || !(this.currentIndex < this.alphabetList.length - 1)">
+                <ion-icon ios="ios-arrow-forward" md="md-arrow-forward" (click)="nextAlphabet()"></ion-icon>
+            </button>
         </div>
-        <canvas-component #blackSlateInt canvasid="blackslate" canvaswidth="500" canvasheight="100" canvasstyle="blackboard"></canvas-component>
+        <canvas-component #blackSlateInt canvasid="blackslate" canvasstyle="blackboard"></canvas-component>
         <div class="board-button-block">
-            <button (click)="blackSlateInt.replay()"> Replay</button>
+            <button (click)="blackSlateInt.replayOld()" [disabled]="!(this.isDrawingCompleted$ | async)">
+                <ion-icon name="refresh"></ion-icon>
+            </button>
             <button (click)="blackSlateInt.clearCanvas()"> clear</button>
-            <button (click)="blackSlateInt.clearBuffer()"> ClearBuffer</button>
-            <button (click)="blackSlateInt.dumpBuffer()"> Dump Buffer </button>
+            <!-- <button (click)="blackSlateInt.clearBuffer()"> ClearBuffer</button> -->
+            <!-- <button (click)="blackSlateInt.dumpBuffer()"> Dump Buffer </button> -->
         </div>
     </div>
 </ion-content>

@@ -1,18 +1,21 @@
-import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CanvasDrawService } from '../../services/canvas.utilities';
 import { Observable, Subscription } from 'rxjs';
-import { AppSettings} from '../../app/app.settings';
+import { AppSettings } from '../../app/app.settings';
 
 @Component(
     {
         selector: 'canvas-component',
         templateUrl: 'canvas.component.html'
     })
-export class CanvasComponent implements AfterViewInit, OnDestroy {
+export class CanvasComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() canvasid: string;
-    @Input() canvaswidth: string;
-    @Input() canvasheight: string;
+    /*  @Input() canvaswidth: string;
+     @Input() canvasheight: string; */
     @Input() canvasstyle: string;
+
+    protected canvasWidth: string;
+    protected canvasHeight: string;
 
     private canvasInstance: any;
     private canvasCtx: CanvasRenderingContext2D;
@@ -34,7 +37,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     constructor(private canvasDrawService: CanvasDrawService) {
         this.serializedActionArr = [];
     }
-
+    ngOnInit() {
+        this.canvasWidth = AppSettings.BOARD_SIZE.toString();
+        this.canvasHeight = AppSettings.BOX_HEIGHT.toString();
+    }
     ngAfterViewInit() {
         console.log('ionViewDidLoad WritingAlphabetsPage');
         this.InitCanvas(this.canvasid);
@@ -46,8 +52,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
 
     public replay(charIndex, canvasOffset) {
-        this.canvasDrawService.replay(this.canvasCtx, charIndex, canvasOffset);
+        return this.canvasDrawService.replay(this.canvasCtx, charIndex, canvasOffset);
     }
+
+    public replayOld() {
+        return this.canvasDrawService.replayOld(this.canvasCtx, this.serializedActionArr);
+    }
+    /*  public getCanvasDarawStatus(): Observable<any> {
+         return this.canvasDrawService.getCanvasDarawStatus();
+     } */
 
     public clearBuffer() {
         this.serializedActionArr = [];

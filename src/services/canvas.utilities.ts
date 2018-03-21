@@ -1,11 +1,22 @@
 // import { Injectable } from '@angular/core';
 import { TAMIL_CHAR_MAPPINGS } from './tamil-char-canvas-mapping';
 import { AppSettings } from '../app/app.settings';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs';
 
+interface Point {
+    x: number;
+    y: number;
+};
+export enum CanvasDrawStatus {
+    DRAW_IN_PROGRESS,
+    DRAW_COMPLETED
+};
 // @Injectable()
 export class CanvasDrawService {
-
+    private drawStateSubject: ReplaySubject<any>;
     constructor() {
+        this.drawStateSubject = new ReplaySubject(1);
     }
 
     public drawRulers(canvasCtx): void {
@@ -13,43 +24,47 @@ export class CanvasDrawService {
         canvasCtx.strokeStyle = "grey";
 
         canvasCtx.beginPath();
-        canvasCtx.moveTo(0.5, 100.5);
-        canvasCtx.lineTo(500.5, 100.5);
+        canvasCtx.moveTo(0, 0);
+        canvasCtx.lineTo(AppSettings.BOARD_SIZE, 0);
         canvasCtx.stroke();
 
-        canvasCtx.moveTo(0.5, 200.5);
-        canvasCtx.lineTo(500.5, 200.5);
-        canvasCtx.stroke();
-
-        this.drawBoxMiddle(canvasCtx);
-        this.drawBoxLeft(canvasCtx);
-        this.drawBoxRight(canvasCtx);
-
+        for (let i = 0; i < AppSettings.NUMBER_OF_BOXES; i++) {
+            this.drawBox(canvasCtx,
+                { x: i * AppSettings.BOX_WIDTH, y: 0 },
+                { x: i * AppSettings.BOX_WIDTH, y: AppSettings.BOX_WIDTH }
+            );
+        }
         canvasCtx.lineWidth = 2;
         canvasCtx.strokeStyle = "white";
+
     }
 
-    public drawBoxLeft(canvasCtx): void {
-        canvasCtx.moveTo(100.5, 0);
-        canvasCtx.lineTo(100.5, 100);
-        canvasCtx.stroke();
-
-        canvasCtx.moveTo(200.5, 0);
-        canvasCtx.lineTo(200.5, 100);
+    public drawBox(canvasCtx: any, tl: Point, br: Point): void {
+        canvasCtx.moveTo(tl.x, tl.y);
+        canvasCtx.lineTo(br.x, br.y);
         canvasCtx.stroke();
     }
-
-    public drawBoxMiddle(canvasCtx): void {
-        canvasCtx.moveTo(300.5, 0);
-        canvasCtx.lineTo(300.5, 100);
-        canvasCtx.stroke();
-    }
-
-    public drawBoxRight(canvasCtx): void {
-        canvasCtx.moveTo(400.5, 0);
-        canvasCtx.lineTo(400.5, 100);
-        canvasCtx.stroke();
-    }
+    /*  public drawBoxLeft(canvasCtx): void {
+         canvasCtx.moveTo(100.5, 0);
+         canvasCtx.lineTo(100.5, 100);
+         canvasCtx.stroke();
+ 
+         canvasCtx.moveTo(200.5, 0);
+         canvasCtx.lineTo(200.5, 100);
+         canvasCtx.stroke();
+     }
+ 
+     public drawBoxMiddle(canvasCtx): void {
+         canvasCtx.moveTo(300.5, 0);
+         canvasCtx.lineTo(300.5, 100);
+         canvasCtx.stroke();
+     }
+ 
+     public drawBoxRight(canvasCtx): void {
+         canvasCtx.moveTo(400.5, 0);
+         canvasCtx.lineTo(400.5, 100);
+         canvasCtx.stroke();
+     } */
 
     private midPointBtw(p1, p2) {
         return {
@@ -88,15 +103,22 @@ export class CanvasDrawService {
             y: (evt.changedTouches[0].clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
         };
     }
+    public getCanvasDarawStatus(): Observable<any> {
+        return this.drawStateSubject;
+    }
+    public replayOld(canvasCtx, SerializedActionArr) {
+        let flatActions = [];
+        for (let i = 0; i < AppSettings.NUMBER_OF_BOXES; i++) {
+            this.clearCanvasRect(canvasCtx, i * AppSettings.BOX_WIDTH);
+        }
 
-    /* public replayOld() {
-         let flatActions = [];
-         this.serializedActionArr.map(actionArray => {
-             flatActions.push({ x: -1 });  // Markert for begin path..
-             flatActions = flatActions.concat(actionArray);
-         });
-         this.drawActions(flatActions, REDRAW_ACTION_INTERVAL)
-     }*/
+        SerializedActionArr.map(actionArray => {
+            flatActions.push({ x: -1 });  // Markert for begin path..
+            flatActions = flatActions.concat(actionArray);
+        });
+        this.drawActions(canvasCtx, flatActions, AppSettings.REDRAW_ACTION_INTERVAL);
+        this.drawStateSubject.next(CanvasDrawStatus.DRAW_IN_PROGRESS);
+    }
 
     public replay(canvasCtx, currentChar, canvasOffset) {
         let flatActions = [];
@@ -109,26 +131,28 @@ export class CanvasDrawService {
         });
         this.drawActions(canvasCtx, flatActions, AppSettings.REDRAW_ACTION_INTERVAL, canvasOffset);
         // this.drawActions(TAMIL_CHAR_MAPPINGS['அ'], REDRAW_ACTION_INTERVAL)
+        this.drawStateSubject.next(CanvasDrawStatus.DRAW_IN_PROGRESS);
     }
 
-    private clearCanvasRect(canvasCtx, canvasOffset): void {
+    private clearCanvasRect(canvasCtx, canvasOffset = 0): void {
         canvasCtx.clearRect(canvasOffset + 1,
             0,
             AppSettings.BOX_WIDTH - 1,
-            AppSettings.BOX_HEIGHT);
+            AppSettings.BOX_HEIGHT); 
     }
-    private drawActions(canvasCtx, actionList, interval, canvasOffset) {
+    private drawActions(canvasCtx, actionList, interval, canvasOffset = 0) {
         if (!actionList || actionList.length === 0)
             return;
         let start = 0;
         // https://stackoverflow.com/questions/2749244/javascript-setinterval-and-this-solution
 
-        let timerId = setInterval((function (canvasCtx, canvasOffset) {
+        let timerId = setInterval((function (canvasCtx, canvasOffset, that) {
 
             return function () {
                 if (start >= actionList.length - 1) {
                     canvasCtx.closePath()
-                    clearInterval(timerId)
+                    clearInterval(timerId);
+                    that.drawStateSubject.next(CanvasDrawStatus.DRAW_COMPLETED);
                 }
                 else {
                     if (actionList[start].x === -1) {
@@ -142,7 +166,6 @@ export class CanvasDrawService {
                     start++;
                 }
             }
-        })(canvasCtx, canvasOffset), interval);
+        })(canvasCtx, canvasOffset, this), interval);
     }
-
 }
