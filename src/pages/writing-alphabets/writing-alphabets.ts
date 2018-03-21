@@ -1,11 +1,10 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { MyNavbarComponent } from '../../components/navbar/navbar.component'
 import { AppSettings } from '../../app/app.settings'
 import { TAMIL_CHAR_MAPPINGS } from '../../services/tamil-char-canvas-mapping'
 import { NativeAudio } from 'ionic-native';
 import { CanvasComponent } from '../../components/canvas-component/canvas.component';
-import { CanvasDrawStatus, CanvasDrawService } from '../../services/canvas.utilities';
+import {  CanvasDrawService } from '../../services/canvas.utilities';
 import { Observable } from 'rxjs/Observable';
 
 /**

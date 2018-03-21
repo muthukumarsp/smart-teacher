@@ -14,6 +14,7 @@ import { CanvasDrawService } from '../services/canvas.utilities';
 import { WritingAlphabetsPage } from '../pages/writing-alphabets/writing-alphabets';
 import { MyNavbarComponent } from '../components/navbar/navbar.component';
 import { CanvasComponentModule } from '../components/canvas-component/canvas.module';
+import { NativeAudio } from '@ionic-native/native-audio';
 const cloudSettings: CloudSettings = {
     'core': {
         'app_id': 'c05da8b4'
@@ -45,7 +46,8 @@ const cloudSettings: CloudSettings = {
         StatusBar,
         SplashScreen,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
-        CanvasDrawService
+        CanvasDrawService,
+        NativeAudio
     ]
 })
 export class AppModule {
