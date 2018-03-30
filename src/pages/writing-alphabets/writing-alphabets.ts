@@ -4,7 +4,7 @@ import { AppSettings } from '../../app/app.settings'
 import { TAMIL_CHAR_MAPPINGS } from '../../services/tamil-char-canvas-mapping'
 import { NativeAudio } from 'ionic-native';
 import { CanvasComponent } from '../../components/canvas-component/canvas.component';
-import {  CanvasDrawService } from '../../services/canvas.utilities';
+import { CanvasDrawService } from '../../services/canvas.utilities';
 import { Observable } from 'rxjs/Observable';
 
 /**
@@ -23,20 +23,21 @@ export class WritingAlphabetsPage implements AfterViewInit {
     public currentChar: string;
     public currentIndex: number = 0; // char index in navbar array
     public canvasOffset: number; // char index in navbar array
+    public audioEnabled = true;; // char index in navbar array
     public alphabetList: any;
     public isDrawingCompleted$: Observable<any>;
     private indexToFileNameMapping: string[] = [
-        'அ.wav',
-        'ஆ.wav',
-        'இ.wav',
+        'அ.mp3',
+        'ஆ.mp3',
+        'இ.mp3',
         'ஈ.mp3',
         'உ.mp3',
         'ஊ.mp3',
-        'எ.wav',
+        'எ.mp3',
         'ஏ.mp3',
-        'ஐ.wav',
+        'ஐ.mp3',
         'ஒ.mp3',
-        'ஓ.wav',
+        'ஓ.mp3',
         'ஔ.mp3',
         'ஃ.mp3',
         'க்.mp3',
@@ -62,7 +63,6 @@ export class WritingAlphabetsPage implements AfterViewInit {
         public navParams: NavParams,
         public canvasDrawService: CanvasDrawService) {
         this.currentIndex = 0;
-        // this.isDrawingCompleted = true;
         this.alphabetList = Object.keys(TAMIL_CHAR_MAPPINGS);
         this.updateCurrentState();
         this.loadAudioFiles();
@@ -89,7 +89,9 @@ export class WritingAlphabetsPage implements AfterViewInit {
 
     public playCurrentState() {
         this.blackBoardInst.replay(this.currentChar, this.canvasOffset);
-        this.playAudio();
+        if (this.audioEnabled) {
+            this.playAudio();
+        }
     }
     protected playAudio(): void {
         console.log("play Audio currentChar", this.currentIndex);
@@ -97,7 +99,7 @@ export class WritingAlphabetsPage implements AfterViewInit {
         console.log('playing filename', 'assets/audio/' + audioFileName);
         NativeAudio.play(audioFileName + 'id').then(
             () => console.log("audio play sucess"),
-            () => console.log("audio play failed"));
+            (error) => console.log("audio play failed", error));
         /*  NativeAudio.unload(audioFileName + 'id').then(() => { console.log('unload success'); },
              () => { console.log(' onError'); }); */
     }

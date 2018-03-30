@@ -15,11 +15,39 @@ import { WritingAlphabetsPage } from '../pages/writing-alphabets/writing-alphabe
 import { MyNavbarComponent } from '../components/navbar/navbar.component';
 import { CanvasComponentModule } from '../components/canvas-component/canvas.module';
 import { NativeAudio } from '@ionic-native/native-audio';
+import { Pro } from '@ionic/pro';
+import { Injectable, Injector } from '@angular/core';
+
+Pro.init('7e72e6ba', {
+    appVersion: '0.1'
+});
 const cloudSettings: CloudSettings = {
     'core': {
-        'app_id': 'c05da8b4'
+        'app_id': '7e72e6ba'
     }
-};
+}; 
+@Injectable()
+export class MyErrorHandler implements ErrorHandler {
+    ionicErrorHandler: IonicErrorHandler;
+
+    constructor(injector: Injector) {
+        try {
+            this.ionicErrorHandler = injector.get(IonicErrorHandler);
+        } catch (e) {
+            // Unable to get the IonicErrorHandler provider, ensure
+            // IonicErrorHandler has been added to the providers list below
+        }
+    }
+
+    handleError(err: any): void {
+        Pro.monitoring.handleNewError(err);
+        // Remove this if you want to disable Ionic's auto exception handling
+        // in development mode.
+        this.ionicErrorHandler && this.ionicErrorHandler.handleError(err);
+    }
+}
+
+ 
 
 @NgModule({
     declarations: [
@@ -45,7 +73,8 @@ const cloudSettings: CloudSettings = {
     providers: [
         StatusBar,
         SplashScreen,
-        { provide: ErrorHandler, useClass: IonicErrorHandler },
+        IonicErrorHandler,
+        { provide: ErrorHandler, useClass: MyErrorHandler },
         CanvasDrawService,
         NativeAudio
     ]

@@ -21,7 +21,11 @@
             </button>
             <div class="active-char" [innerHtml]="currentChar"></div>
             <button [disabled]="!(this.isDrawingCompleted$ | async)">
-                <ion-icon name="refresh" (click)="playCurrentState()"></ion-icon>
+                <ion-icon name="redo" (click)="playCurrentState()"></ion-icon>
+            </button>
+            <button (click)='audioEnabled = !audioEnabled'>
+                <ion-icon *ngIf="audioEnabled" name="volume-up"></ion-icon>
+                <ion-icon class="audio-volume-off" *ngIf="!audioEnabled" name="volume-off"></ion-icon>
             </button>
             <button [disabled]="!(this.isDrawingCompleted$ | async) || !(this.currentIndex < this.alphabetList.length - 1)">
                 <ion-icon ios="ios-arrow-forward" md="md-arrow-forward" (click)="nextAlphabet()"></ion-icon>
